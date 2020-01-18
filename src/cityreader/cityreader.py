@@ -1,5 +1,41 @@
 # Create a class to hold a city location. Call the class "City". It should have
 # fields for name, lat and lon (representing latitude and longitude).
+import csv
+import math
+
+class City():
+    def __init__(self, name, lat, lon):
+      self.name = name
+      self.lat = lat
+      self.lon = lon
+    
+    def __str__(self):
+      return f"The city of {self.name} is located at lat: {self.lat}, lon: {self.lon}"
+       
+    def isWithin(self, p1, p2):
+      withinLatRange = False
+      withinLonRange = False
+
+      # Check if within Latitudes
+      if(p1[0] - p2[0] > 0):
+        if(self.lat < p1[0] and self.lat > p2[0]):
+          withinLatRange = True
+      else:
+        if(self.lat < p2[0] and self.lat > p1[0]):
+          withinLatRange = True
+
+      # Check if within Longitudes
+      if(p1[1] - p2[1] > 0):
+        if(self.lon < p1[1] and self.lon > p2[1]):
+          withinLonRange = True
+      else:
+        if(self.lon < p2[1] and self.lon > p1[1]):
+          withinLonRange = True
+
+      if(withinLatRange and withinLonRange):
+          return True
+      else:
+          return False
 
 
 # We have a collection of US cities with population over 750,000 stored in the
@@ -20,7 +56,11 @@ def cityreader(cities=[]):
   # TODO Implement the functionality to read from the 'cities.csv' file
   # For each city record, create a new City instance and add it to the 
   # `cities` list
-    
+    with open('cities.csv', newline='') as csvfile:
+        cityreader = csv.DictReader(csvfile)
+        for row in cityreader:
+          cities.append(City(name=row['city'], lon=float(row['lng']), lat=float(row['lat'])))
+          
     return cities
 
 cityreader(cities)
@@ -67,5 +107,15 @@ def cityreader_stretch(lat1, lon1, lat2, lon2, cities=[]):
   # TODO Ensure that the lat and lon valuse are all floats
   # Go through each city and check to see if it falls within 
   # the specified coordinates.
+
+  # Tupleize Points
+  p1 = (lat1, lon1)
+  p2 = (lat2, lon2)
+ 
+  # This works
+  for x in cities: 
+    if(x.isWithin(p1, p2)):
+      within.append(x)
+      
 
   return within
